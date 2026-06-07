@@ -51,27 +51,47 @@ export function getIngredientImageUrl(ingredient) {
 }
 
 /**
- * Searches TheMealDB for a meal containing one of the given ingredients
- * and returns the thumbnail image URL of the first match.
+ * Searches TheMealDB for the best matching meal image.
+ * First tries the recipe title, then falls back to ingredients.
+ * @param {string} title
  * @param {string[]} ingredients
  * @returns {Promise<string|null>}
  */
-export async function fetchRecipeImage(ingredients) {
+export async function fetchRecipeImage(title, ingredients) {
+  // Try searching by recipe title first
+  if (title) {
+    const titleKeywords = title.split(' ').slice(0, 3).join(' ')
+    try {
+      const res = await fetch(
+        `https://www.themealdb.com/api/json/v1/1/search.php?s=${encodeURIComponent(titleKeywords)}`
+      )
+      if (res.ok) {
+        const data = await res.json()
+        if (data.meals && data.meals.length > 0) {
+          return data.meals[0].strMealThumb
+        }
+      }
+    } catch {
+      // Fall through to ingredient search
+    }
+  }
+
+  // Fallback: search by ingredients
   for (const ingredient of ingredients) {
     try {
       const res = await fetch(
         `https://www.themealdb.com/api/json/v1/1/filter.php?i=${encodeURIComponent(ingredient)}`
-      );
-      if (!res.ok) continue;
-      const data = await res.json();
+      )
+      if (!res.ok) continue
+      const data = await res.json()
       if (data.meals && data.meals.length > 0) {
-        return data.meals[0].strMealThumb;
+        return data.meals[0].strMealThumb
       }
     } catch {
       // Try next ingredient
     }
   }
-  return null;
+  return null
 }
 
 /**

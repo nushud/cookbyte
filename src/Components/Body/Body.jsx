@@ -6,7 +6,8 @@ import {
   fetchRecipeImage,
   getIngredientImageUrl,
   parseSteps,
-  fetchStepImages
+  fetchStepImages,
+  extractTitle
 } from './receipeApi'
 
 export default function Body() {
@@ -59,7 +60,8 @@ export default function Body() {
 
     try {
       const text = await generateRecipe(ingredient)
-      const img = await fetchRecipeImage(ingredient)
+      const title = extractTitle(text)
+      const img = await fetchRecipeImage(title, ingredient)
       const steps = parseSteps(text)
       const stepImgs = await fetchStepImages(steps)
       setRecipeText(text)
