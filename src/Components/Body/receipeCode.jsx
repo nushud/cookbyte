@@ -95,21 +95,41 @@ function PageSteps({ steps }) {
   if (!steps || steps.length === 0) {
     return (
       <>
-        <h3 className="section-heading">Steps to Follow</h3>
-        <div className="steps-box">
-          <p className="boxed-paragraph" style={{textAlign:'center', textIndent:0}}>No instructions found in the response.</p>
+        <h3 className="section-heading">Preparation Guide</h3>
+        <div className="steps-sections">
+          <div className="step-section">
+            <h4 className="step-section-title">Instructions</h4>
+            <p className="boxed-paragraph" style={{textAlign:'center'}}>No instructions found.</p>
+          </div>
         </div>
       </>
     )
   }
+  
+  // Group steps into sections (every 2-3 steps form a section)
+  const sections = []
+  for (let i = 0; i < steps.length; i += 2) {
+    const sectionSteps = steps.slice(i, Math.min(i + 2, steps.length))
+    const sectionNames = ['Getting Started', 'Preparation', 'Cooking', 'Final Touches', 'Serving']
+    const sectionName = sectionNames[Math.floor(i / 2)] || `Part ${Math.floor(i / 2) + 1}`
+    sections.push({ name: sectionName, steps: sectionSteps })
+  }
+  
   return (
     <>
-      <h3 className="section-heading">Steps to Follow</h3>
-      <div className="steps-box">
-        {steps.map((step, i) => (
-          <div key={i} className="step-bullet-item">
-            <span className="step-bullet">•</span>
-            <span className="step-bullet-text">{step.text}</span>
+      <h3 className="section-heading">Preparation Guide</h3>
+      <div className="steps-sections">
+        {sections.map((section, i) => (
+          <div key={i} className="step-section">
+            <h4 className="step-section-title">{section.name}</h4>
+            <div className="section-steps">
+              {section.steps.map((step, j) => (
+                <div key={j} className="section-step-item">
+                  <span className="section-step-num">{step.number}</span>
+                  <span className="section-step-text">{step.text}</span>
+                </div>
+              ))}
+            </div>
           </div>
         ))}
       </div>

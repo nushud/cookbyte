@@ -891,6 +891,82 @@ section h1 {
   margin-bottom: 20px;
 }
 
+/* ---------- Steps Sections Layout ---------- */
+.steps-sections {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.step-section {
+  border: 2px solid #B8A88A;
+  padding: 24px;
+  background: rgba(255, 251, 245, 0.6);
+  position: relative;
+}
+
+.step-section::before {
+  content: '◆';
+  position: absolute;
+  top: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #F5E6C8;
+  padding: 0 12px;
+  color: #C9A961;
+  font-size: 0.8rem;
+}
+
+.step-section-title {
+  font-family: 'Cinzel Decorative', 'Cinzel', serif;
+  font-size: 1.1rem;
+  color: #C75B39;
+  text-align: center;
+  margin: 0 0 16px 0;
+  letter-spacing: 2px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #D4C8BE;
+}
+
+.section-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.section-step-item {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 10px 0;
+  border-bottom: 1px dashed #D4C8BE;
+}
+
+.section-step-item:last-child {
+  border-bottom: none;
+}
+
+.section-step-num {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 28px;
+  height: 28px;
+  background: #C75B39;
+  color: #FFFBF5;
+  font-family: 'Cinzel', serif;
+  font-size: 0.8rem;
+  font-weight: 700;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.section-step-text {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #4A3B32;
+}
+
 /* ---------- Responsive ---------- */
 @media (max-width: 640px) {
   .Body {

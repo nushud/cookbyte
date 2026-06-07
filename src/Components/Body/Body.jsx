@@ -139,7 +139,7 @@ export default function Body() {
             </div>
             <div className="cooking-pot"></div>
           </div>
-          <span>Chef Claude is getting your recipe ready...</span>
+          <span>CookByte is getting your recipe ready...</span>
         </div>
       )}
 
