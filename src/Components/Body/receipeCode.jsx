@@ -148,7 +148,7 @@ function PageFinal({ title, recipeImage }) {
             <img src={recipeImage} alt="Final dish" />
           </div>
         )}
-        <h4 className="final-result-title">{title || 'A Delightful Creation'}</h4>
+        <h4 className="final-result-title">{title && title.length > 2 ? title : 'Recipe'}</h4>
         <p className="final-result-text">Serve warm and savour every bite. Bon appétit!</p>
         <div className="end-line"></div>
         <div className="end-ornament">❦</div>
