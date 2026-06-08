@@ -206,31 +206,47 @@ function extractTitle(text) {
 }
 
 function groupIntoRecipes(steps) {
-  // If 4 or fewer steps, treat as single recipe
-  if (steps.length <= 4) {
-    return [{ steps }]
+  // Default: all steps in one recipe
+  if (!steps || steps.length === 0) {
+    return [{ steps: [] }]
   }
   
-  // Try to detect multiple recipes by looking for recipe title patterns
   const recipes = []
-  let currentRecipe = { steps: [] }
+  let currentRecipe = { steps: [], title: null }
   
   for (let i = 0; i < steps.length; i++) {
     const step = steps[i]
-    // Check if this step looks like a recipe title (short, no number at start)
-    if (step.text.length < 40 && !/^\d/.test(step.text) && currentRecipe.steps.length > 0) {
-      // Start a new recipe
+    const text = step.text.toLowerCase()
+    
+    // Detect actual recipe titles (not just short steps)
+    // Look for patterns like: "Alternative:", "Variation:", "Option 2:", "Another way:"
+    const isRecipeTitle = (
+      (/^alternative|^variation|^option\s+\d|^another\s+way|^second\s+recipe|^different\s+version|^method\s+\d/i.test(text)) &&
+      step.text.length < 50
+    ) || (
+      // Or a very short line that looks like a heading (ends with colon)
+      (/:$/.test(step.text) || /recipe\s*\d*\s*:$/i.test(step.text)) &&
+      step.text.length < 30 &&
+      currentRecipe.steps.length > 2 // Only split after at least 2 steps
+    )
+    
+    if (isRecipeTitle && currentRecipe.steps.length > 0) {
+      // Save current recipe and start new one
       recipes.push(currentRecipe)
-      currentRecipe = { steps: [] }
+      currentRecipe = { steps: [], title: step.text.replace(/:$/, '') }
+      continue // Skip adding this title as a step
     }
+    
     currentRecipe.steps.push(step)
   }
   
+  // Push final recipe
   if (currentRecipe.steps.length > 0) {
     recipes.push(currentRecipe)
   }
   
-  return recipes.length > 1 ? recipes : [{ steps }]
+  // Return single recipe if only found one
+  return recipes.length > 0 ? recipes : [{ steps }]
 }
 
 function isHeader(line) {
