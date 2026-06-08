@@ -73,15 +73,18 @@ function PageTitle({ title, ingredients }) {
   return (
     <>
       <div className="recipe-title-section">
-        <h2 className="page-main-title">{title || 'A Delightful Creation'}</h2>
+        <h2 className="page-main-title">{title && !title.includes('think') && title.length > 2 ? title : 'Recipe'}</h2>
         <div className="title-underline"></div>
       </div>
       {ingredients && ingredients.length > 0 && (
         <div className="ingredients-section">
           <h4 className="ingredients-subtitle">Ingredients</h4>
-          <div className="ingredients-list-compact">
+          <div className="ingredients-box">
             {ingredients.map((item, i) => (
-              <span key={i} className="ingredient-tag">{item}</span>
+              <div key={i} className="boxed-item">
+                <span className="boxed-marker">•</span>
+                <span>{item}</span>
+              </div>
             ))}
           </div>
         </div>
@@ -161,7 +164,7 @@ function PageFinal({ title, recipeImage }) {
 /* ---------- Helpers ---------- */
 function parseSteps(text) {
   const cleaned = (text || '')
-    .replace(/\u003cthink\u003e[\s\S]*?\u003c\/think>/g, '')
+    .replace(/\u003cthink\u003e[\s\S]*?\u003c\/think\u003e/g, '')
     .replace(/^\s*here\s+(is|are)\s+a?\s*recipe[\s:]*/i, '')
     .replace(/^\s*below\s+(is|are)\s+a?\s*recipe[\s:]*/i, '')
     .trim()
@@ -201,7 +204,7 @@ function parseSteps(text) {
 
 function extractTitle(text) {
   const cleaned = (text || '')
-    .replace(/\u003cthink\u003e[\s\S]*?\u003c\/think\003e/g, '')
+    .replace(/\u003cthink\u003e[\s\S]*?\u003c\/think\u003e/g, '')
     .trim()
 
   const lines = cleaned.split('\n').map(l => l.trim()).filter(l => l.length > 0)
