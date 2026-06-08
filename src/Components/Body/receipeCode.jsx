@@ -98,44 +98,31 @@ function PageSteps({ steps }) {
   if (!steps || steps.length === 0) {
     return (
       <>
-        <h3 className="section-heading">Preparation Guide</h3>
-        <div className="steps-sections">
-          <div className="step-section">
-            <h4 className="step-section-title">Instructions</h4>
-            <p className="boxed-paragraph" style={{textAlign:'center'}}>No instructions found.</p>
-          </div>
+        <h3 className="section-heading">Preparation</h3>
+        <div className="steps-box">
+          <p className="boxed-paragraph" style={{textAlign:'center'}}>No instructions found.</p>
         </div>
       </>
     )
   }
   
-  // Group steps into sections (every 2-3 steps form a section)
-  const sections = []
-  for (let i = 0; i < steps.length; i += 2) {
-    const sectionSteps = steps.slice(i, Math.min(i + 2, steps.length))
-    const sectionNames = ['Getting Started', 'Preparation', 'Cooking', 'Final Touches', 'Serving']
-    const sectionName = sectionNames[Math.floor(i / 2)] || `Part ${Math.floor(i / 2) + 1}`
-    sections.push({ name: sectionName, steps: sectionSteps })
-  }
+  // Group steps into recipes (detect multiple recipes by headers or gaps)
+  const recipes = groupIntoRecipes(steps)
   
   return (
     <>
-      <h3 className="section-heading">Preparation Guide</h3>
-      <div className="steps-sections">
-        {sections.map((section, i) => (
-          <div key={i} className="step-section">
-            <h4 className="step-section-title">{section.name}</h4>
-            <div className="section-steps">
-              {section.steps.map((step, j) => (
-                <div key={j} className="section-step-item">
-                  <span className="section-step-num">{step.number}</span>
-                  <span className="section-step-text">{step.text}</span>
-                </div>
-              ))}
-            </div>
+      {recipes.map((recipe, i) => (
+        <div key={i} className="recipe-section">
+          <h3 className="section-heading">{recipes.length > 1 ? `Recipe ${i + 1}` : 'Preparation'}</h3>
+          <div className="steps-box">
+            {recipe.steps.map((step, j) => (
+              <div key={j} className="step-item">
+                <span className="step-text">{step.text}</span>
+              </div>
+            ))}
           </div>
-        ))}
-      </div>
+        </div>
+      ))}
     </>
   )
 }
@@ -216,6 +203,34 @@ function extractTitle(text) {
     }
   }
   return 'A Delightful Creation'
+}
+
+function groupIntoRecipes(steps) {
+  // If 4 or fewer steps, treat as single recipe
+  if (steps.length <= 4) {
+    return [{ steps }]
+  }
+  
+  // Try to detect multiple recipes by looking for recipe title patterns
+  const recipes = []
+  let currentRecipe = { steps: [] }
+  
+  for (let i = 0; i < steps.length; i++) {
+    const step = steps[i]
+    // Check if this step looks like a recipe title (short, no number at start)
+    if (step.text.length < 40 && !/^\d/.test(step.text) && currentRecipe.steps.length > 0) {
+      // Start a new recipe
+      recipes.push(currentRecipe)
+      currentRecipe = { steps: [] }
+    }
+    currentRecipe.steps.push(step)
+  }
+  
+  if (currentRecipe.steps.length > 0) {
+    recipes.push(currentRecipe)
+  }
+  
+  return recipes.length > 1 ? recipes : [{ steps }]
 }
 
 function isHeader(line) {
