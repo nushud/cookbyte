@@ -4,7 +4,7 @@
  * @returns {Promise<string>} - The generated recipe text
  */
 export async function generateRecipe(ingredients) {
-  const prompt = `I have these ingredients: ${ingredients.join(", ")}. Suggest a clear, step-by-step recipe I can make.`;
+  const prompt = `I have these ingredients: ${ingredients.join(", ")}. Suggest a clear, step-by-step recipes which I can make.clearly indicate the receipe name and steps to follow `;
 
   let response;
   try {
